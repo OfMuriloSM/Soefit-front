@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soefit - Autenticação</title>
+    <link rel="stylesheet" href="./Css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="auth-body">
+    <div class="overlay"></div>
+    
+    <main class="auth-container">
+        <div class="auth-box">
+            <h1 class="logo-text">Soefit</h1>
+            <p class="subtitle">Seu sistema de progressão de treinos</p>
+
+            <div id="login-section">
+                <h2 class="section-title">ENTRAR</h2>
+                <form id="form-login">
+                    <div class="input-group">
+                        <label>E-mail ou Usuário</label>
+                        <div class="input-icon">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="login-email" required placeholder="seunome@soefit.com">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="login-senha" required placeholder="••••••••">
+                        </div>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#">Esqueceu a senha?</a>
+                    </div>
+                    <button type="submit" class="btn-primary">ACESSAR</button>
+                </form>
+                <p class="toggle-text">Não tem uma conta? <span id="to-register">Cadastre-se</span></p>
+            </div>
+
+            <div id="register-section" style="display: none;">
+                <h2 class="section-title">CADASTRAR</h2>
+                <form id="form-register">
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <div class="input-icon">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" id="reg-nome" required placeholder="Seu Nome">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>E-mail</label>
+                        <div class="input-icon">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="reg-email" required placeholder="seu@email.com">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Definir Senha</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="reg-senha" required placeholder="Escolha sua senha">
+                        </div>
+                    </div>
+                    <div class="terms">
+                        <p>Ao continuar, você concorda com nossos <a href="#">Termos de Uso</a>.</p>
+                    </div>
+                    <button type="submit" class="btn-primary">COMEÇAR AGORA</button>
+                </form>
+                <p class="toggle-text">Já possui conta? <span id="to-login">Entrar</span></p>
+            </div>
+            
+            <div id="auth-msg" class="msg-box alert-hidden"></div>
+        </div>
+    </main>
+
+    <script src="./JS/uiHandler.js"></script>
+    <script src="./Controller/authController.js"></script>
+</body>
+</html>

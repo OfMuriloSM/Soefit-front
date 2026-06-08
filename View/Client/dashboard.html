@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soefit - Painel</title>
+    <link rel="stylesheet" href="../../Css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1 class="logo-text" style="font-size: 1.8rem; margin: 0;">Soefit</h1>
+            <div class="user-info">
+                <span id="welcome-msg" style="color: var(--text-light); font-weight: 600;">Olá, Atleta!</span>
+                <button id="btn-logout" class="btn-small" style="background-color: #333; margin-left: 10px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="actions-col">
+            <section class="form-section">
+                <h2 class="section-title">Criar Nova Ficha</h2>
+                <form id="form-ficha">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <input type="text" id="nomeTreino" required placeholder="Ex: Treino A - Peito e Tríceps">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-bottom: 0;">Salvar Ficha</button>
+                </form>
+            </section>
+
+            <section class="form-section">
+                <h2 class="section-title">Adicionar Exercício</h2>
+                <form id="form-exercicio">
+                    <div class="input-group">
+                        <label>Vincular a qual Ficha?</label>
+                        <select id="select-fichas" required>
+                            <option value="">Carregando fichas...</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Nome do Exercício</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-dumbbell"></i>
+                            <input type="text" id="nomeExercicio" required placeholder="Ex: Supino Reto">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Séries</label>
+                            <input type="number" id="series" min="1" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Reps</label>
+                            <input type="number" id="repeticoes" min="1" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Carga (Kg)</label>
+                            <input type="number" step="0.1" id="cargaKg">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-bottom: 0;">Salvar Exercício</button>
+                </form>
+            </section>
+        </div>
+
+        <section class="list-section">
+            <h2 class="section-title">Minhas Fichas</h2>
+            <div id="lista-fichas" class="fichas-container">
+                </div>
+        </section>
+    </main>
+
+    <script src="../../Controller/dashboardController.js"></script>
+</body>
+</html>
