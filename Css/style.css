@@ -21,9 +21,6 @@ body {
   color: var(--text-light);
 }
 
-/* =========================================
-   1. TELA DE AUTENTICAÇÃO (LOGIN / CADASTRO)
-   ========================================= */
 .auth-body {
   background-image: url('../IMG/bacgrond-login.avif');
   background-size: cover;
@@ -106,9 +103,6 @@ body {
   transition: opacity 0.2s ease-in-out;
 }
 
-/* =========================================
-   2. ELEMENTOS GERAIS (INPUTS E BOTÕES)
-   ========================================= */
 .input-group {
   margin-bottom: 20px;
   text-align: left;
@@ -224,9 +218,6 @@ select:focus {
   text-align: center;
 }
 
-/* =========================================
-   3. DASHBOARD / PAINEL
-   ========================================= */
 header {
   background-color: var(--card-bg);
   padding: 15px 20px;
@@ -299,9 +290,7 @@ header {
   padding-bottom: 0;
 }
 
-/* =========================================
-   4. ALERTAS E MENSAGENS
-   ========================================= */
+
 .msg-box {
   margin-top: 20px;
   padding: 12px;
@@ -329,9 +318,25 @@ header {
   box-shadow: 0 0 10px rgba(40, 167, 69, 0.1);
 }
 
-/* =========================================
-   5. RESPONSIVIDADE (MOBILE)
-   ========================================= */
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75); 
+    backdrop-filter: blur(5px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+}
+
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column;

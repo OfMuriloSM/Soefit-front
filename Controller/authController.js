@@ -1,6 +1,5 @@
 const API_URL = 'http://localhost:8080/api/usuarios';
 
-// CONTROLLER: EVENTO DE LOGIN
 document.getElementById('form-login').addEventListener('submit', async function(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
@@ -26,7 +25,6 @@ document.getElementById('form-login').addEventListener('submit', async function(
     }
 });
 
-// CONTROLLER: EVENTO DE CADASTRO
 document.getElementById('form-register').addEventListener('submit', async function(e) {
     e.preventDefault();
     const nome = document.getElementById('reg-nome').value;

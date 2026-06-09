@@ -37,7 +37,7 @@ async function carregarDashboard() {
 // ==========================================
 function renderizarFichas(fichas) {
     const container = document.getElementById('lista-fichas');
-    container.innerHTML = ''; // Limpa a tela
+    container.innerHTML = ''; 
 
     if (fichas.length === 0) {
         container.innerHTML = '<p style="color: var(--text-muted)">Você ainda não possui fichas criadas.</p>';
@@ -45,20 +45,40 @@ function renderizarFichas(fichas) {
     }
 
     fichas.forEach(ficha => {
-        // Monta o visual de cada ficha
         const fichaDiv = document.createElement('div');
         fichaDiv.className = 'ficha-card';
         
-        // Monta a lista de exercícios dentro dessa ficha
         let exerciciosHTML = '';
         if (ficha.exercicios && ficha.exercicios.length > 0) {
             ficha.exercicios.forEach(ex => {
+                
+                // MÁGICA DO HISTÓRICO: Cria a tabelinha dinamicamente
+                let historicoHTML = '';
+                if (ex.historicoCargas) {
+                    const pesos = ex.historicoCargas.split(' | ');
+                    let celulas = pesos.map((p, i) => `<td style="padding: 6px; border: 1px solid #444; white-space: nowrap;">Treino ${i+1}<br><strong style="color:var(--primary-orange);">${p}</strong></td>`).join('');
+                    historicoHTML = `
+                        <div style="margin-top: 12px; overflow-x: auto; border-radius: 4px;">
+                            <table style="font-size: 0.8rem; border-collapse: collapse; width: 100%; text-align: center; background-color: #222;">
+                                <tr>${celulas}</tr>
+                            </table>
+                        </div>
+                    `;
+                }
+
                 exerciciosHTML += `
-                    <div class="exercicio-item">
-                        <span><strong>${ex.nome}</strong> - ${ex.series}x${ex.repeticoes} (${ex.cargaKg}kg)</span>
-                        <button onclick="deletarExercicio(${ex.id})" class="btn-small" style="background: transparent; color: #dc3545; padding: 0;">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                    <div class="exercicio-item" style="flex-direction: column; align-items: stretch; padding: 15px 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 1.05rem;"><strong>${ex.nome}</strong> - ${ex.series}x${ex.repeticoes}</span>
+                            <div>
+                                <button type="button" onclick="abrirModalEdicao(${ex.id}, ${ficha.id}, '${ex.nome}', ${ex.series}, ${ex.repeticoes}, ${ex.cargaKg})" class="btn-small" title="Editar" style="background: transparent; color: #ffc107; padding: 0 10px;">                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" onclick="deletarExercicio(${ex.id})" class="btn-small" title="Excluir" style="background: transparent; color: #dc3545; padding: 0;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${historicoHTML}
                     </div>
                 `;
             });
@@ -69,7 +89,7 @@ function renderizarFichas(fichas) {
         fichaDiv.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
                 <h3 style="color: var(--primary-orange); margin: 0;">${ficha.nomeTreino}</h3>
-                <button onclick="deletarFicha(${ficha.id})" class="btn-small" style="background-color: #dc3545;">Excluir Ficha</button>
+                <button type="button" onclick="deletarFicha(${ficha.id})" class="btn-small" style="background-color: #dc3545;">Excluir Ficha</button>
             </div>
             <div class="exercicios-lista" style="display: flex; flex-direction: column; gap: 8px;">
                 ${exerciciosHTML}
@@ -78,6 +98,66 @@ function renderizarFichas(fichas) {
         container.appendChild(fichaDiv);
     });
 }
+
+// Variável global para guardar qual exercício estamos editando
+let exercicioEmEdicao = null;
+
+function abrirModalEdicao(id, fichaId, nomeAtual, series, repeticoes, cargaAtual) {
+    // Guarda os dados para usar quando clicar em Salvar
+    exercicioEmEdicao = { id, fichaId, series, repeticoes };
+
+    // Preenche os campos do modal com os dados atuais do banco
+    document.getElementById('modal-nome').value = nomeAtual;
+    document.getElementById('modal-carga').value = cargaAtual;
+
+    // Mostra o Modal na tela
+    document.getElementById('modal-update').style.display = 'flex';
+}
+
+function fecharModalEdicao() {
+    // Esconde o Modal
+    document.getElementById('modal-update').style.display = 'none';
+    exercicioEmEdicao = null;
+}
+
+// Evento do botão Cancelar do Modal
+document.getElementById('btn-cancelar-modal').addEventListener('click', fecharModalEdicao);
+
+// Evento do botão Salvar do Modal
+document.getElementById('btn-salvar-modal').addEventListener('click', async () => {
+    if (!exercicioEmEdicao) return;
+
+    const novoNome = document.getElementById('modal-nome').value.trim();
+    const novaCarga = document.getElementById('modal-carga').value;
+
+    if (novoNome === "" || novaCarga === "") {
+        alert("Os campos não podem ficar vazios!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/exercicios/${exercicioEmEdicao.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                fichaId: exercicioEmEdicao.fichaId,
+                nome: novoNome,
+                series: exercicioEmEdicao.series,
+                repeticoes: exercicioEmEdicao.repeticoes,
+                cargaKg: parseFloat(novaCarga)
+            })
+        });
+
+        if (response.ok) {
+            fecharModalEdicao(); // Fecha a janelinha bonita
+            carregarDashboard(); // Atualiza a tabelinha de histórico na tela
+        } else {
+            alert("Erro ao atualizar a carga.");
+        }
+    } catch (error) {
+        console.error("Erro na requisição:", error);
+    }
+});
 
 function atualizarSelectFichas(fichas) {
     const select = document.getElementById('select-fichas');
@@ -130,14 +210,52 @@ document.getElementById('form-exercicio').addEventListener('submit', async (e) =
 });
 
 // Deletar Entidades
-async function deletarFicha(id) {
-    if(confirm('Tem certeza que deseja excluir esta ficha inteira?')) {
-        await fetch(`http://localhost:8080/api/fichas/${id}`, { method: 'DELETE' });
-        carregarDashboard();
-    }
+// ==========================================
+// LÓGICA DO MODAL DE EXCLUSÃO
+// ==========================================
+let idParaExcluir = null;
+let tipoParaExcluir = null; // 'ficha' ou 'exercicio'
+
+// Substitui o confirm() feio pelo nosso Modal
+function deletarFicha(id) {
+    idParaExcluir = id;
+    tipoParaExcluir = 'ficha';
+    document.getElementById('modal-delete-msg').textContent = "Tem certeza que deseja excluir esta ficha inteira? Todos os exercícios nela serão perdidos.";
+    document.getElementById('modal-delete').style.display = 'flex';
 }
 
-async function deletarExercicio(id) {
-    await fetch(`http://localhost:8080/api/exercicios/${id}`, { method: 'DELETE' });
-    carregarDashboard();
+function deletarExercicio(id) {
+    idParaExcluir = id;
+    tipoParaExcluir = 'exercicio';
+    document.getElementById('modal-delete-msg').textContent = "Tem certeza que deseja excluir este exercício?";
+    document.getElementById('modal-delete').style.display = 'flex';
 }
+
+function fecharModalDelete() {
+    document.getElementById('modal-delete').style.display = 'none';
+    idParaExcluir = null;
+    tipoParaExcluir = null;
+}
+
+document.getElementById('btn-cancelar-delete').addEventListener('click', fecharModalDelete);
+
+document.getElementById('btn-confirmar-delete').addEventListener('click', async () => {
+    if (!idParaExcluir || !tipoParaExcluir) return;
+
+    try {
+        const url = tipoParaExcluir === 'ficha' 
+            ? `http://localhost:8080/api/fichas/${idParaExcluir}` 
+            : `http://localhost:8080/api/exercicios/${idParaExcluir}`;
+
+        const response = await fetch(url, { method: 'DELETE' });
+
+        if (response.ok) {
+            fecharModalDelete(); // Fecha o popup
+            carregarDashboard(); // Recarrega os cards
+        } else {
+            alert("Erro ao tentar excluir.");
+        }
+    } catch (error) {
+        console.error("Erro na requisição:", error);
+    }
+});
